@@ -21,17 +21,20 @@ class ShopFront extends GeneralController
  */
     public function index(Request $request)
     {
-        return view('templates.' . sc_store('template') . '.shop_home',
-            array(
-                'products_new' => (new ShopProduct)->getProducts($type = null, $limit = sc_config('product_new'), $opt = null),
-                'products_hot' => (new ShopProduct)->getProducts($type = SC_PRODUCT_HOT, $limit = sc_config('product_hot'), $opt = 'random'),
-                'categories' => (new ShopCategory)->getCategoriesAll(),
-                'products_build' => (new ShopProduct)->getTopBuild($limit = 4),
-                'products_group' => (new ShopProduct)->getTopGroup($limit = 4),
-                'layout_page' => 'home',
+        $modelShopProduct = new ShopProduct();
+        $modelShopCategory = new ShopCategory();
 
-            )
-        );
+        $categories = $modelShopCategory->getCategoriesAll();
+        $products_new = $modelShopProduct->getProducts(null, sc_config('product_new'));
+        $products_hot = $modelShopProduct->getProducts(SC_PRODUCT_HOT, sc_config('product_hot'), 'random');
+        $products_build = $modelShopProduct->getTopBuild($limit = 4);
+        $products_group = $modelShopProduct->getTopGroup($limit = 4);
+        $layout_page = 'home';
+
+        $_view = 'templates.' . sc_store('template') . '.shop_home'; // templates.default.shop_home
+        $_data = compact('categories','products_new','products_hot', 'products_build', 'products_group', 'layout_page');
+
+        return view($_view, $_data);
     }
 
 /**
